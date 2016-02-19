@@ -1,1 +1,1 @@
-CS61A UC Berkeley 2016Spring
+UC Berkeley CS61A 2016Spring
