@@ -1,5 +1,5 @@
 UC Berkeley CS61A 2016Spring.
 
-Test from my Air.
+Test from my laptop.
 
-Test from my Pro.
+Test from my desktop.
