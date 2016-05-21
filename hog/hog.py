@@ -214,6 +214,12 @@ def make_averaged(fn, num_samples=1000):
     # BEGIN Question 6
     "*** REPLACE THIS LINE ***"
     # END Question 6
+    def ret(*args):
+        total, i = 0, 0
+        while i < num_samples:
+            total, i = total+fn(*args), i+1
+        return total / num_samples
+    return ret 
 
 
 def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
@@ -228,6 +234,14 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     # BEGIN Question 7
     "*** REPLACE THIS LINE ***"
     # END Question 7
+    _max, number_of_dice, ret = 0, 10, 0
+    while number_of_dice > 0:
+        avg = make_averaged(roll_dice)(number_of_dice, dice)
+        _max = max(_max, avg)
+        if avg >= _max:
+            result = number_of_dice
+        number_of_dice -= 1
+    return result
 
 
 def winner(strategy0, strategy1):
@@ -279,6 +293,12 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=5):
     "*** REPLACE THIS LINE ***"
     return 5  # Replace this statement
     # END Question 8
+    bacon_points = abs(opponent_score // 10 - opponent_score % 10) + 1
+
+    if bacon_points >= margin:
+        return 0
+    else:
+        return num_rolls
 
 
 def swap_strategy(score, opponent_score, num_rolls=5):
@@ -289,6 +309,14 @@ def swap_strategy(score, opponent_score, num_rolls=5):
     "*** REPLACE THIS LINE ***"
     return 5  # Replace this statement
     # END Question 9
+    bacon_points = abs(opponent_score // 10 - opponent_score % 10) + 1
+
+    if opponent_score == 2 * (score + bacon_points):
+        return 0
+    elif (score + bacon_points) == 2 * opponent_score:
+        return num_rolls
+    else:
+        return bacon_strategy(score, opponent_score, margin, num_rolls)
 
 
 def final_strategy(score, opponent_score):
@@ -298,8 +326,24 @@ def final_strategy(score, opponent_score):
     """
     # BEGIN Question 10
     "*** REPLACE THIS LINE ***"
-    return 5  # Replace this statement
+    #return 5  # Replace this statement
     # END Question 10
+    bacon_points = abs(opponent_score // 10 - opponent_score % 10) + 1
+
+    if (score + bacon_points + opponent_score) % 7 == 0 and bacon_points >= 4:
+        return 0
+    # Try to trigger a beneficial swine swap by trying score only one point
+    elif 2 * (score + 1) == opponent_score:
+        return swap_strategy(score, opponent_score, 10, 10)
+    # Decrease num_rolls to 3 and margin to 4, more suitable for a 4-sided dice
+    elif (score + opponent_score) % 7 == 0:
+        return swap_strategy(score, opponent_score, 4, 3)
+    # More offensive when losing
+    elif score < opponent_score:
+        return swap_strategy(score, opponent_score, 9, 6)
+    # More defensive when leading
+    else:
+        return swap_strategy(score, opponent_score, 7, 4)
 
 
 ##########################
